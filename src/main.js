@@ -1,6 +1,5 @@
 const path = require("node:path");
 const { app, BrowserWindow, ipcMain, dialog } = require("electron/main");
-const { loadConfig, ConfigError } = require("./configLoading.js");
 
 app.whenReady().then(async () => {
 	process.on("unhandledRejection", (error) => {
