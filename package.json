@@ -5,6 +5,7 @@
 	"main": "src/main.js",
 	"scripts": {
 		"start": "electron-forge start -- --url=https://steam-web-wrap-demo.deno.dev/ --no-fullscreen",
+		"fmt": "prettier . --write",
 		"make": "electron-forge make",
 		"make-linux": "electron-forge make -p linux -a x64",
 		"make-windows": "electron-forge make -p win32 -a x64"
