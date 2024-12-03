@@ -1,5 +1,5 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("steamWebWrap", {
-	close: () => ipcRenderer.invoke("close"),
+	closeApp: () => ipcRenderer.invoke("closeApp"),
 });

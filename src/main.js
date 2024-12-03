@@ -18,7 +18,7 @@ app.whenReady().then(async () => {
 		throw e;
 	}
 	const { url, fullscreen } = config;
-	ipcMain.handle("close", () => {
+	ipcMain.handle("closeApp", () => {
 		app.quit();
 	});
 	const win = new BrowserWindow({
