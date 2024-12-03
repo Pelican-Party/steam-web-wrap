@@ -8,16 +8,16 @@ app.whenReady().then(async () => {
 		app.exit();
 	});
 
-	let config;
-	try {
-		config = await loadConfig(app);
-	} catch (e) {
-		if (e instanceof ConfigError) {
-			dialog.showErrorBox("Error", e.message);
-		}
-		throw e;
+	const url = app.commandLine.getSwitchValue("url");
+	if (!url) {
+		dialog.showErrorBox("Error", "No url was provided, provide one using the --url= command line argument.");
 	}
-	const { url, fullscreen } = config;
+
+	let fullscreen = true;
+	if (process.argv.includes("--no-fullscreen")) {
+		fullscreen = false;
+	}
+
 	ipcMain.handle("closeApp", () => {
 		app.quit();
 	});
