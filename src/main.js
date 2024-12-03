@@ -30,6 +30,7 @@ app.whenReady().then(async () => {
 			sandbox: false,
 		},
 	});
+	win.removeMenu();
 
 	win.loadURL(url);
 });
