@@ -1,5 +1,5 @@
 const path = require("node:path");
-const { app, BrowserWindow, ipcMain, dialog, Menu } = require("electron/main");
+const { app, shell, BrowserWindow, ipcMain, dialog, Menu } = require("electron/main");
 const { buildMenu } = require("./buildMenu.js");
 
 app.whenReady().then(async () => {
@@ -44,6 +44,11 @@ app.whenReady().then(async () => {
 			win.setMenu(menu);
 		}
 	}
+
+	win.webContents.setWindowOpenHandler(({ url }) => {
+		shell.openExternal(url);
+		return { action: 'deny' };
+	});
 
 	win.loadURL(url);
 });
