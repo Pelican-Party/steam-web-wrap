@@ -1,5 +1,6 @@
 const path = require("node:path");
-const { app, BrowserWindow, ipcMain, dialog } = require("electron/main");
+const { app, BrowserWindow, ipcMain, dialog, Menu } = require("electron/main");
+const { buildMenu } = require("./buildMenu.js");
 
 app.whenReady().then(async () => {
 	process.on("unhandledRejection", (error) => {
@@ -17,6 +18,10 @@ app.whenReady().then(async () => {
 		fullscreen = false;
 	}
 
+	const showDebugMenu = process.argv.includes("--show-debug-menu");
+	if (showDebugMenu) fullscreen = false;
+	const menu = buildMenu(showDebugMenu);
+
 	ipcMain.handle("closeApp", () => {
 		app.quit();
 	});
@@ -24,12 +29,21 @@ app.whenReady().then(async () => {
 		width: 800,
 		height: 600,
 		fullscreen,
+		autoHideMenuBar: !showDebugMenu,
 		webPreferences: {
 			preload: path.join(__dirname, "preload.js"),
 			sandbox: false,
 		},
 	});
-	win.removeMenu();
+	if (process.platform == "darwin") {
+		Menu.setApplicationMenu(menu);
+	} else {
+		if (fullscreen) {
+			win.removeMenu();
+		} else {
+			win.setMenu(menu);
+		}
+	}
 
 	win.loadURL(url);
 });
