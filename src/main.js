@@ -107,6 +107,7 @@ app.whenReady().then(async () => {
 	win.on("leave-full-screen", () => {
 		setFullscreenState(false);
 	});
+	setFullscreenState(fullscreen);
 
 	win.loadURL(url);
 });
