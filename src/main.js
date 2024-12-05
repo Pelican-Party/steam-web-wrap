@@ -41,7 +41,7 @@ app.whenReady().then(async () => {
 	const win = new BrowserWindow({
 		width: 800,
 		height: 600,
-		fullscreen: true,
+		fullscreen,
 		fullscreenable: true,
 		autoHideMenuBar: !showDebugMenu,
 		webPreferences: {
