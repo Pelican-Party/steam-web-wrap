@@ -3,6 +3,10 @@ const fs = require("node:fs/promises");
 const { app, shell, BrowserWindow, ipcMain, dialog, Menu } = require("electron/main");
 const { buildMenu } = require("./buildMenu.js");
 
+// These two flags make the steam overlay work
+app.commandLine.appendSwitch("in-process-gpu");
+app.commandLine.appendSwitch("disable-direct-composition");
+
 app.whenReady().then(async () => {
 	/**
 	 * This argument should really only be used during development of steam-web-wrap.
