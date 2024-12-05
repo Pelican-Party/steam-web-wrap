@@ -34,7 +34,7 @@ app.whenReady().then(async () => {
 	if (showDebugMenu) fullscreen = false;
 	const menu = buildMenu(showDebugMenu);
 
-	ipcMain.handle("closeApp", () => {
+	ipcMain.handle("quitApp", () => {
 		app.quit();
 	});
 

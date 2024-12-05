@@ -1,7 +1,7 @@
-const { contextBridge, internalContextBridge, ipcRenderer } = require("electron");
+const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("steamWebWrap", {
-	closeApp: () => ipcRenderer.invoke("closeApp"),
+	quitApp: () => ipcRenderer.invoke("quitApp"),
 });
 
 let fullscreenState = false;
