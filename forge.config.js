@@ -1,6 +1,12 @@
 module.exports = {
 	packagerConfig: {
-		ignore: [/^\/\.gitignore$/gi, /^\/\.prettierrc$/gi, /^\/config\.json$/gi, /^\/forge\.config\.js$/gi],
+		ignore: [
+			/^\/\.gitignore$/gi,
+			/^\/\.gitattributes$/gi,
+			/^\/\.prettierrc$/gi,
+			/^\/config\.json$/gi,
+			/^\/forge\.config\.js$/gi,
+		],
 	},
 	makers: [
 		{
