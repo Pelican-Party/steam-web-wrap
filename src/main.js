@@ -27,6 +27,8 @@ app.whenReady().then(async () => {
 	const url = app.commandLine.getSwitchValue("url");
 	if (!url) {
 		dialog.showErrorBox("Error", "No url was provided, provide one using the --url= command line argument.");
+		app.quit();
+		return;
 	}
 
 	let fullscreen = true;
