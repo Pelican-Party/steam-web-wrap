@@ -18,7 +18,7 @@ app.whenReady().then(async () => {
 	const debug = process.argv.includes("--debug-dev");
 
 	process.on("unhandledRejection", (error) => {
-		console.error(error);
+		console.error("unhandled rejection:", error);
 		if (!debug) {
 			app.exit();
 		}
@@ -76,7 +76,7 @@ app.whenReady().then(async () => {
 
 	const sameContextPreloadPath = path.join(__dirname, "sameContextPreload.js");
 	const sameContextPreloadContent = await fs.readFile(sameContextPreloadPath, { encoding: "utf8" });
-	win.webContents.on("dom-ready", async () => {
+	const contextPreloadPromise = (async () => {
 		try {
 			await win.webContents.executeJavaScript(sameContextPreloadContent);
 		} catch (e) {
@@ -89,7 +89,7 @@ app.whenReady().then(async () => {
 				throw e;
 			}
 		}
-	});
+	})();
 
 	/**
 	 * @param {boolean} state
@@ -111,7 +111,17 @@ app.whenReady().then(async () => {
 	});
 	setFullscreenState(fullscreen);
 
-	win.loadURL(url);
+	try {
+		await win.loadURL(url);
+	} catch (e) {
+		if (e.code == "ERR_INTERNET_DISCONNECTED") {
+			await win.loadFile("src/youAreOffline.html");
+		} else {
+			throw e;
+		}
+	}
+
+	await contextPreloadPromise;
 });
 
 app.on("window-all-closed", () => {

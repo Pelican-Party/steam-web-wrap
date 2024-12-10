@@ -4,31 +4,33 @@
 // At the moment this is fired when the document is ready since I haven't found a way
 // to run this before any other scripts on the page yet.
 
-const originalExitFullscreen = document.exitFullscreen;
-Object.defineProperty(document, "exitFullscreen", {
-	configurable: true,
-	writable: true,
-	value: async () => {
-		if (_steamWebWrapInternal.getFullscreenState()) {
-			await _steamWebWrapInternal.exitFullScreen();
-		}
-		return originalExitFullscreen.call(document);
-	},
-});
+(() => {
+	const originalExitFullscreen = document.exitFullscreen;
+	Object.defineProperty(document, "exitFullscreen", {
+		configurable: true,
+		writable: true,
+		value: async () => {
+			if (_steamWebWrapInternal.getFullscreenState()) {
+				await _steamWebWrapInternal.exitFullScreen();
+			}
+			return originalExitFullscreen.call(document);
+		},
+	});
 
-const originalGetFullscreenElement = Object.getOwnPropertyDescriptor(Document.prototype, "fullscreenElement").get;
+	const originalGetFullscreenElement = Object.getOwnPropertyDescriptor(Document.prototype, "fullscreenElement").get;
 
-Object.defineProperty(document, "fullscreenElement", {
-	configurable: true,
-	get: () => {
-		const original = originalGetFullscreenElement.call(document);
-		if (original) return original;
-		if (_steamWebWrapInternal.getFullscreenState()) {
-			return document.body;
-		}
-		return null;
-	},
-});
+	Object.defineProperty(document, "fullscreenElement", {
+		configurable: true,
+		get: () => {
+			const original = originalGetFullscreenElement.call(document);
+			if (original) return original;
+			if (_steamWebWrapInternal.getFullscreenState()) {
+				return document.body;
+			}
+			return null;
+		},
+	});
+})();
 
 // Since `webContents.executeJavaScript()` is used to run all of this,
 // the last line determines what will be sent back to the main process.

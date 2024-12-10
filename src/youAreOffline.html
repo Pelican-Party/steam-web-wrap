@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'" />
+		<title>You are offline</title>
+		<style>
+			html,
+			body,
+			div {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				background-color: black;
+				color: white;
+				font-family: system-ui, sans-serif;
+			}
+
+			div {
+				display: flex;
+				flex-direction: column;
+				align-content: center;
+				justify-content: center;
+				flex-wrap: wrap;
+				align-items: center;
+				text-align: center;
+			}
+
+			h1 {
+				font-size: 40pt;
+				margin: 0;
+				margin-bottom: 0.2em;
+			}
+
+			p {
+				font-size: 12pt;
+			}
+
+			button {
+				background-color: transparent;
+				border: none;
+				color: white;
+				font-size: 12pt;
+				opacity: 0.75;
+				padding: 10px 20px;
+			}
+
+			button:hover {
+				opacity: 0.85;
+			}
+
+			button:active {
+				opacity: 1;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<h1>You are offline</h1>
+			<p>This game requires an internet connection.<br />Please connect to the internet and try again.</p>
+			<button onclick="steamWebWrap.quitApp()">Exit</button>
+		</div>
+	</body>
+</html>
