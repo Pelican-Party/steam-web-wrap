@@ -41,16 +41,29 @@
 				border: none;
 				color: white;
 				font-size: 12pt;
-				opacity: 0.75;
+				opacity: 0.8;
 				padding: 10px 20px;
+				cursor: pointer;
 			}
 
 			button:hover {
-				opacity: 0.85;
+				opacity: 0.9;
 			}
 
-			button:active {
+			button:active,
+			button.active {
 				opacity: 1;
+			}
+
+			button.gamepad-available::before {
+				content: "A";
+				background-color: white;
+				color: black;
+				border-radius: 30px;
+				display: inline-block;
+				width: 1.5em;
+				line-height: 1.5em;
+				margin-right: 0.5em;
 			}
 		</style>
 	</head>
@@ -58,7 +71,49 @@
 		<div>
 			<h1>You are offline</h1>
 			<p>This game requires an internet connection.<br />Please connect to the internet and try again.</p>
-			<button onclick="steamWebWrap.quitApp()">Exit</button>
+			<button id="exitButton" onclick="steamWebWrap.quitApp()">Exit</button>
 		</div>
+		<script>
+			const exitButton = document.getElementById("exitButton");
+
+			let firstGamepadDetected = false;
+			let aHasBeenPressed = false;
+			function loop() {
+				/** @type {(Gamepad | null)[]} */
+				let gamepads = [];
+				try {
+					gamepads = navigator.getGamepads();
+				} catch {
+					// Ignore the error in case it starts working in the next frame
+				}
+
+				let aPressed = false;
+				for (const gamepad of gamepads) {
+					if (!gamepad) continue;
+
+					if (!firstGamepadDetected) {
+						exitButton.classList.add("gamepad-available");
+						firstGamepadDetected = true;
+					}
+
+					if (gamepad.buttons[0].pressed) {
+						aPressed = true;
+					}
+				}
+
+				if (firstGamepadDetected) {
+					if (aPressed) {
+						aHasBeenPressed = true;
+					} else if (aHasBeenPressed) {
+						aHasBeenPressed = false;
+						steamWebWrap.quitApp();
+					}
+					exitButton.classList.toggle("active", aPressed);
+				}
+
+				window.requestAnimationFrame(loop);
+			}
+			loop();
+		</script>
 	</body>
 </html>
