@@ -50,6 +50,7 @@ app.whenReady().then(async () => {
 		fullscreen,
 		fullscreenable: true,
 		autoHideMenuBar: !showDebugMenu,
+		show: false,
 		webPreferences: {
 			preload: path.join(__dirname, "preload.js"),
 			sandbox: false,
@@ -120,6 +121,7 @@ app.whenReady().then(async () => {
 			throw e;
 		}
 	}
+	win.show();
 
 	await contextPreloadPromise;
 });
