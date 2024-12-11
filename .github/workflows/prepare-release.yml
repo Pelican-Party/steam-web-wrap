@@ -21,7 +21,7 @@ jobs:
         with:
           script: |
             const { RELEASE_VERSION } = process.env;
-            const {data: releaseData} = await github.request(`POST /repos/${owner}/${repo}/releases`, {
+            const {data: releaseData} = await github.request("POST /repos/{owner}/{repo}/releases", {
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: tag,
