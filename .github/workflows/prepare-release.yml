@@ -1,0 +1,29 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The version to prepare"
+        type: string
+        required: true
+
+jobs:
+  create-draft:
+    name: Create Draft
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Draft
+        uses: actions/github-script@v7
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        with:
+          script: |
+            const { RELEASE_VERSION } = process.env;
+            github.request(`POST /repos/${owner}/${repo}/releases`, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              name: releaseName,
+              draft: true,
+            })
