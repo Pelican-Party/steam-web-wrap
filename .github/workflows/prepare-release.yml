@@ -46,9 +46,10 @@ jobs:
           RELEASE_VERSION: ${{ inputs.version }}
         with:
           script: |
+            const { createReadStream } = require("fs");
             const { RELEASE_VERSION } = process.env;
             const {owner, repo} = context.repo;
-            const {data: releaseData} = await github.request("POST /repos/{owner}/{repo}/releases", {
+            const {data: releaseData} = await github.repos.createRelease({
               owner,
               repo,
               tag_name: RELEASE_VERSION,
@@ -62,8 +63,8 @@ jobs:
                 "content-type": "text/plain",
                 "content-length": 14
               },
-              data: "Hello, world!\n",
-              name: "test-upload.txt",
-              label: "test label"
-            })
+              data: createReadStream("steam-web-wrap-linux-x64-0.0.0.zip"),
+              name: "steam-web-wrap-linux-x64-0.0.0.zip",
+              label: "Linux Build"
+            });
 
