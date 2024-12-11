@@ -23,11 +23,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-id
-          path: out/make/linux/x64/steam-web-wrap-linux-x64-${{ inputs.version }}.zip
-      - run: |
-          echo "Current directory: $(pwd)"
-          ls
-          find out
+          path: out/make/zip/linux/x64/steam-web-wrap-linux-x64-${{ inputs.version }}.zip
 
   create-release:
     name: Create GitHub Release
