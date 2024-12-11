@@ -6,9 +6,8 @@
 	"scripts": {
 		"start": "electron-forge start -- --url=https://steam-web-wrap-demo.deno.dev/ --no-fullscreen --show-debug-menu --debug-dev",
 		"fmt": "prettier . --write",
-		"make": "electron-forge make",
-		"make-linux": "electron-forge make -p linux -a x64",
-		"make-windows": "electron-forge make -p win32 -a x64"
+		"build-linux": "node ./scripts/build.mjs linux",
+		"build-windows": "node ./scripts/build.mjs windows"
 	},
 	"repository": {
 		"type": "git",
@@ -21,8 +20,8 @@
 	},
 	"homepage": "https://github.com/Pelican-Party/steam-web-wrap#readme",
 	"devDependencies": {
-		"@electron-forge/cli": "7.6.0",
-		"@electron-forge/maker-zip": "7.6.0",
+		"@electron/packager": "^18.3.6",
+		"cross-zip": "^4.0.1",
 		"electron": "33.2.1",
 		"prettier": "3.4.1"
 	}
