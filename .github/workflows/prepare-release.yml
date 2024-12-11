@@ -24,6 +24,7 @@ jobs:
         with:
           name: release-id
           path: out/make/linux/x64/steam-web-wrap-linux-x64-${{ inputs.version }}.zip
+      - run: find . -type f
 
   create-release:
     name: Create GitHub Release
