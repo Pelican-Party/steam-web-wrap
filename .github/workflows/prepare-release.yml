@@ -12,6 +12,8 @@ jobs:
   create-draft:
     name: Create Release Draft
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required for creating GitHub releases
     steps:
       - name: Create release
         id: create-release
