@@ -36,9 +36,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: linux-build
-      - run: |
-          ls
-          find .
       - name: Create release
         id: create-release
         uses: actions/github-script@v7
@@ -48,8 +45,8 @@ jobs:
           script: |
             const { createReadStream } = require("fs");
             const { RELEASE_VERSION } = process.env;
-            const {owner, repo} = context.repo;
-            const {data: releaseData} = await github.rest.repos.createRelease({
+            const { owner, repo } = context.repo;
+            const { data: releaseData } = await github.rest.repos.createRelease({
               owner,
               repo,
               tag_name: RELEASE_VERSION,
@@ -57,14 +54,17 @@ jobs:
               draft: true,
             });
 
-            github.rest.repos.uploadReleaseAsset({
-              url: releaseData.upload_url,
-              headers: {
-                "content-type": "text/plain",
-                "content-length": 14
-              },
-              data: createReadStream("steam-web-wrap-linux-x64-0.0.0.zip"),
-              name: "steam-web-wrap-linux-x64-0.0.0.zip",
-              label: "Linux Build"
-            });
+            async function uploadZip(fileName, label) {
+              await github.rest.repos.uploadReleaseAsset({
+                url: releaseData.upload_url,
+                headers: {
+                  "content-type": "application/zip",
+                  "content-length": statSync(fileName).size
+                },
+                data: createReadStream(fileName),
+                name: fileName,
+                label,
+              });
+            }
 
+            await uploadZip("steam-web-wrap-linux-x64-0.0.0.zip", "Linux Build");
