@@ -9,9 +9,26 @@ on:
         required: true
 
 jobs:
-  create-draft:
-    name: Create Release Draft
+  build-linux:
+    name: Build Linux
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i
+      - run: npm run make-linux
+      - name: Store release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-id
+          path: out/make/linux/x64/steam-web-wrap-linux-x64-${{ inputs.version }}.zip
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build-linux
     permissions:
       contents: write # Required for creating GitHub releases
     steps:
@@ -23,20 +40,11 @@ jobs:
         with:
           script: |
             const { RELEASE_VERSION } = process.env;
-            const {data: releaseData} = await github.request("POST /repos/{owner}/{repo}/releases", {
+            const result = await github.request("POST /repos/{owner}/{repo}/releases", {
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: RELEASE_VERSION,
               name: RELEASE_VERSION,
               draft: true,
             });
-            return releaseData.id;
-
-      - name: Write release id
-        run: echo ${{ steps.create-release.outputs.result }} > releaseId.txt
-
-      - name: Store release id
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-id
-          path: releaseId.txt
+            console.log(result);
