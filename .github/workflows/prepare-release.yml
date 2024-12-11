@@ -10,20 +10,31 @@ on:
 
 jobs:
   create-draft:
-    name: Create Draft
+    name: Create Release Draft
     runs-on: ubuntu-latest
     steps:
-      - name: Create Draft
+      - name: Create release
+        id: create-release
         uses: actions/github-script@v7
         env:
           RELEASE_VERSION: ${{ inputs.version }}
         with:
           script: |
             const { RELEASE_VERSION } = process.env;
-            github.request(`POST /repos/${owner}/${repo}/releases`, {
+            const {data: releaseData} = await github.request(`POST /repos/${owner}/${repo}/releases`, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               tag_name: tag,
               name: releaseName,
               draft: true,
-            })
+            });
+            return releaseData.id;
+
+      - name: Write release id
+        run: echo ${{ steps.create-release.outputs.result }} > releaseId.txt
+
+      - name: Store release id
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-id
+          path: releaseId.txt
