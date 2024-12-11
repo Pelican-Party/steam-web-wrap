@@ -92,4 +92,4 @@ jobs:
               });
             }
 
-            await uploadZip("linux.zip", "Linux Build");
+            await uploadZip("linux", "Linux Build");
