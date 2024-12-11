@@ -76,6 +76,7 @@ jobs:
               tag_name: version,
               name: version,
               draft: true,
+              generate_release_notes: true,
             });
 
             async function uploadZip(platform, label) {
