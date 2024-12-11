@@ -4,26 +4,48 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "The version to prepare"
+        description: "The new version. This will be used as argument for the 'npm version' command. For instance, providing 'minor' will cause the minor version to get bumped."
         type: string
         required: true
 
 jobs:
+  bump-version:
+    name: Bump Version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Bump version
+        id: bump-version
+        run: npm version ${{ inputs.version }}
+      - run: git push
+      - run: echo ${{ steps.bump-version.outputs.result }} > version.txt
+      - name: Store version artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: version
+          path: version.txt
+
   build-linux:
     name: Build Linux
     runs-on: ubuntu-latest
+    needs: bump-version
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - run: npm i
-      - run: npm run make-linux
+      - run: npm run build-linux
       - name: Store release artifact
         uses: actions/upload-artifact@v4
         with:
           name: linux-build
-          path: out/make/zip/linux/x64/steam-web-wrap-linux-x64-${{ inputs.version }}.zip
+          path: out/linux.zip
 
   create-release:
     name: Create GitHub Release
@@ -36,35 +58,37 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: linux-build
+      - name: Download version artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: version
       - name: Create release
-        id: create-release
         uses: actions/github-script@v7
-        env:
-          RELEASE_VERSION: ${{ inputs.version }}
         with:
           script: |
-            const { createReadStream } = require("fs");
-            const { RELEASE_VERSION } = process.env;
+            const fs = require("fs");
+            const version = fs.readFileSync("version.txt", { encoding: "utf8" });
             const { owner, repo } = context.repo;
             const { data: releaseData } = await github.rest.repos.createRelease({
               owner,
               repo,
-              tag_name: RELEASE_VERSION,
-              name: RELEASE_VERSION,
+              tag_name: version,
+              name: version,
               draft: true,
             });
 
-            async function uploadZip(fileName, label) {
+            async function uploadZip(platform, label) {
+            const fileName = platform + ".zip";
               await github.rest.repos.uploadReleaseAsset({
                 url: releaseData.upload_url,
                 headers: {
                   "content-type": "application/zip",
                   "content-length": statSync(fileName).size
                 },
-                data: createReadStream(fileName),
-                name: fileName,
+                data: fs.createReadStream(fileName),
+                name: "steam-web-wrap-" + platform + "-" + version + ".zip",
                 label,
               });
             }
 
-            await uploadZip("steam-web-wrap-linux-x64-0.0.0.zip", "Linux Build");
+            await uploadZip("linux.zip", "Linux Build");
