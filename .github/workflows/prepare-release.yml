@@ -22,7 +22,7 @@ jobs:
       - name: Store release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-id
+          name: linux-build
           path: out/make/zip/linux/x64/steam-web-wrap-linux-x64-${{ inputs.version }}.zip
 
   create-release:
@@ -32,6 +32,13 @@ jobs:
     permissions:
       contents: write # Required for creating GitHub releases
     steps:
+      - name: Download linux artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-build
+      - run: |
+          ls
+          find .
       - name: Create release
         id: create-release
         uses: actions/github-script@v7
@@ -40,11 +47,23 @@ jobs:
         with:
           script: |
             const { RELEASE_VERSION } = process.env;
-            const result = await github.request("POST /repos/{owner}/{repo}/releases", {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+            const {owner, repo} = context.repo;
+            const {data: releaseData} = await github.request("POST /repos/{owner}/{repo}/releases", {
+              owner,
+              repo,
               tag_name: RELEASE_VERSION,
               name: RELEASE_VERSION,
               draft: true,
             });
-            console.log(result);
+
+            github.rest.repos.octokit.rest.repos({
+              url: releaseData.upload_url,
+              headers: {
+                "content-type": "text/plain",
+                "content-length": 14
+              },
+              data: "Hello, world!\n",
+              name: "test-upload.txt",
+              label: "test label"
+            })
+
