@@ -56,7 +56,7 @@ jobs:
               draft: true,
             });
 
-            github.rest.repos.octokit.rest.repos({
+            github.repos.uploadReleaseAsset({
               url: releaseData.upload_url,
               headers: {
                 "content-type": "text/plain",
