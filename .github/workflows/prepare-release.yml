@@ -22,11 +22,9 @@ jobs:
       - run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-      - name: Bump version
-        id: bump-version
-        run: npm version ${{ inputs.version }}
-      - run: git push
-      - run: echo ${{ steps.bump-version.outputs.result }} > version.txt
+          NEW_VERSION=$(npm version ${{ inputs.version }})
+          echo "$NEW_VERSION" > version.txt
+          git push
       - name: Store version artifact
         uses: actions/upload-artifact@v4
         with:
