@@ -27,7 +27,7 @@ jobs:
       - run: |
           echo "Current directory: $(pwd)"
           ls
-          find .
+          find out
 
   create-release:
     name: Create GitHub Release
