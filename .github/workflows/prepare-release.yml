@@ -86,7 +86,7 @@ jobs:
                 url: releaseData.upload_url,
                 headers: {
                   "content-type": "application/zip",
-                  "content-length": statSync(fileName).size
+                  "content-length": fs.statSync(fileName).size
                 },
                 data: fs.createReadStream(fileName),
                 name: "steam-web-wrap-" + platform + "-" + version + ".zip",
