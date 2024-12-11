@@ -19,6 +19,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
       - name: Bump version
         id: bump-version
         run: npm version ${{ inputs.version }}
