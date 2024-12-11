@@ -49,7 +49,7 @@ jobs:
             const { createReadStream } = require("fs");
             const { RELEASE_VERSION } = process.env;
             const {owner, repo} = context.repo;
-            const {data: releaseData} = await github.repos.createRelease({
+            const {data: releaseData} = await github.rest.repos.createRelease({
               owner,
               repo,
               tag_name: RELEASE_VERSION,
