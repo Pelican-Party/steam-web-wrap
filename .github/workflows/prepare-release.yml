@@ -68,7 +68,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const version = fs.readFileSync("version.txt", { encoding: "utf8" });
+            const version = fs.readFileSync("version.txt", { encoding: "utf8" }).trim();
             const { owner, repo } = context.repo;
             const { data: releaseData } = await github.rest.repos.createRelease({
               owner,
