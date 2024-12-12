@@ -24,6 +24,20 @@ Steam Web Wrap is a prebuilt application which you can use to publish web games 
 - A lightweight application that uses the OS webview (builds are ~280MB on disk and ~90MB to download)
 - macOS builds are not supported (yet) due to the notarization requirement
 
-## Usage
+## Getting Started
 
-Head over to the [GitHub wiki pages](https://github.com/Pelican-Party/steam-web-wrap/wiki/Usage) for info on how to develop your game and publish it to Steam.
+To get started quickly, download the latest version for your platform from [the releases page](https://github.com/Pelican-Party/steam-web-wrap/releases). Once extracted, launch it from the command line using:
+
+```
+.\steam-web-wrap\launch.exe --url=https://steam-web-wrap-demo.deno.dev/
+```
+
+or on linux:
+
+```
+./steam-web-wrap/launch.sh --url=https://steam-web-wrap-demo.deno.dev/
+```
+
+You may also use the url of one of your favorite web games.
+
+For more info on how to develop your game and publish it to Steam, head over to the [GitHub wiki pages](https://github.com/Pelican-Party/steam-web-wrap/wiki/Usage).
