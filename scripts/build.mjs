@@ -1,8 +1,8 @@
 import { packager } from "@electron/packager";
 import path from "node:path";
 import fs from "node:fs/promises";
-import { zip } from "cross-zip";
-import { promisify } from "node:util";
+import { createWriteStream } from "node:fs";
+import archiver from "archiver";
 
 const platform = process.argv[2];
 
@@ -18,18 +18,7 @@ if (platform == "linux") {
 
 const outDir = path.resolve(import.meta.dirname, "../out");
 const platformParentDir = path.resolve(outDir, platform);
-const buildOutDir = path.resolve(platformParentDir, "steam-web-wrap");
 const zipPath = path.resolve(outDir, platform + ".zip");
-
-try {
-	await fs.rm(buildOutDir, { recursive: true });
-} catch (e) {
-	if (e.code == "ENOENT") {
-		// already deleted
-	} else {
-		throw e;
-	}
-}
 
 const appPaths = await packager({
 	dir: path.resolve(import.meta.dirname, ".."),
@@ -43,7 +32,7 @@ const appPaths = await packager({
 if (appPaths.length != 1) {
 	throw new Error("Assertion failed, expected a single path");
 }
-await fs.rename(appPaths[0], buildOutDir);
+const buildOutDir = appPaths[0];
 
 // Electron apps run fine when launched directly, but it seems like with the steam linux runtime enabled
 // (i.e. when launching through steam) it takes a good minute or so for the app to launch.
@@ -69,4 +58,13 @@ if (platform == "linux") {
 	await fs.rename(oldPath, newPath);
 }
 
-await promisify(zip)(buildOutDir, zipPath);
+console.log("Zipping...");
+const outputFile = createWriteStream(zipPath);
+const archive = archiver("zip", {
+	zlib: {
+		level: 9,
+	},
+});
+archive.pipe(outputFile);
+archive.directory(buildOutDir, "steam-web-wrap");
+archive.finalize();
