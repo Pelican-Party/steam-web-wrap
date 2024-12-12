@@ -1,6 +1,6 @@
 # Steam Web Wrap
 
-Steam web wrap is a prebuilt application which you can use to publish web games to steam with very minimal configuration required.
+Steam Web Wrap is a prebuilt application which you can use to publish web games to steam with very minimal configuration required.
 
 ## What this is
 
@@ -26,52 +26,4 @@ Steam web wrap is a prebuilt application which you can use to publish web games 
 
 ## Usage
 
-### Launching the Application
-
-At the moment, only online pages can be run using Steam Web Wrap, so the first step is to make sure your game is published online somewhere. If you haven't done this yet, you may also use https://steam-web-wrap-demo.deno.dev/ for experimentation.
-
-To get started, you can download the latest build from [the releases page](https://github.com/Pelican-Party/steam-web-wrap/releases). Once downloaded and extracted, you can run the application and provide an url through the command line.
-
-On Windows:
-
-```
-.\steam-web-wrap\launch.exe --url=https://steam-web-wrap-demo.deno.dev/
-```
-
-On Linux:
-
-```
-./steam-web-wrap/launch.sh --url=https://steam-web-wrap-demo.deno.dev/
-```
-
-Additional command line flags include:
-
-- `--no-fullscreen` to launch the application in windowed mode
-- `--show-debug-menu` to include a 'Debug' menu (next to File, Edit, Window) that allows you to reload the page and show DevTools
-
-### Toggling Fullscreen Programmatically
-
-You can use the [Fullscreen API](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API) like you normally would:
-
-```js
-if (!document.fullscreenElement) {
-	await document.body.requestFullscreen();
-} else {
-	await document.exitFullscreen();
-}
-```
-
-Pages running in a browser don't normally start in fullscreen. But pages launched in steam web wrap do. To adjust for this, the `document.fullscreenElement` is initially set to the `<body>` of the page. That way you can use this to update the UI of any fullscreen setting you might have.
-
-> [!NOTE]
-> The fullscreen state is not maintained across sessions at the moment.
-
-### Giving Users a Way to Exit Your Game
-
-In a browser, users can close your page at any time. But since steam web wrap launches games in full screen by default, it might be difficult for users to find out how to close your game.
-
-Even though they can still close the game through the steam overlay or by using shortcuts like `Alt` + `F4` or `Command` + `W`, you might want to add an exit button in your menu somewhere. You can close the game by calling `quitApp()`:
-
-```js
-steamWebWrap.quitApp();
-```
+Head over to the [GitHub wiki pages](https://github.com/Pelican-Party/steam-web-wrap/wiki/Usage) for info on how to develop your game and publish it to Steam.
