@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
+// This object is deprecated, use window.close() instead
 contextBridge.exposeInMainWorld("steamWebWrap", {
 	quitApp: () => ipcRenderer.invoke("quitApp"),
 });
@@ -12,4 +13,5 @@ contextBridge.exposeInMainWorld("_steamWebWrapInternal", {
 		fullscreenState = state;
 	},
 	getFullscreenState: () => fullscreenState,
+	quitApp: () => ipcRenderer.invoke("quitApp"),
 });

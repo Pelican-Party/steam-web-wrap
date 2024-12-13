@@ -1,8 +1,9 @@
 // By default, electron executes the preload script in an isolated context.
 // However, we want to make some modifications to browser apis such as document.exitFullScreen()
 // This script is executed within the same context as the browser process.
-// At the moment this is fired when the document is ready since I haven't found a way
-// to run this before any other scripts on the page yet.
+// At the moment this is executed right after the browser window is created,
+// although I'm not sure whether it is guaranteed that this script runs before
+// any scripts of the page itself.
 
 (() => {
 	const originalExitFullscreen = document.exitFullscreen;
@@ -30,10 +31,8 @@
 			return null;
 		},
 	});
-})();
 
-// Since `webContents.executeJavaScript()` is used to run all of this,
-// the last line determines what will be sent back to the main process.
-// If we don't exclude this, we might accidentally try to send back
-// an object wich can't be cloned, causing the application to crash.
-void 0;
+	window.close = () => {
+		_steamWebWrapInternal.quitApp();
+	};
+})();
