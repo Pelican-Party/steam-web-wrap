@@ -4,7 +4,7 @@
 	"description": "Easily turn your web games into native apps for publishing on Steam.",
 	"main": "src/main.js",
 	"scripts": {
-		"start": "electron . --url=https://steam-web-wrap-demo.deno.dev/ --no-fullscreen --show-debug-menu --debug-dev",
+		"start": "electron . --url=https://steam-web-wrap-demo.deno.dev/ --no-fullscreen --show-debug-menu --debug-dev --appid=480",
 		"fmt": "prettier . --write",
 		"build-linux": "node ./scripts/build.mjs linux",
 		"build-windows": "node ./scripts/build.mjs windows"
@@ -24,5 +24,8 @@
 		"archiver": "7.0.1",
 		"electron": "33.2.1",
 		"prettier": "3.4.1"
+	},
+	"dependencies": {
+		"steamworks.js": "^0.4.0"
 	}
 }

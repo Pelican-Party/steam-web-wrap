@@ -2,10 +2,73 @@ const path = require("node:path");
 const fs = require("node:fs/promises");
 const { app, shell, BrowserWindow, ipcMain, dialog, Menu } = require("electron/main");
 const { buildMenu } = require("./buildMenu.js");
+const steamworks = require("steamworks.js");
 
-// These two flags make the steam overlay work
-app.commandLine.appendSwitch("in-process-gpu");
-app.commandLine.appendSwitch("disable-direct-composition");
+steamworks.electronEnableSteamOverlay();
+
+// We will try to load the steamworks sdk in case Steam Web Wrap was launched through steam.
+// If it wasn't launched through steam, developers can use the --appid= command line flag or maybe even a
+// steam_appid.txt file to set their app id for development.
+// If no appid was set and it wasn't launched through steam, the user is likely
+// just trying to experiment with steam-web-wrap. We'll still want to launch in that case,
+// the steamworks sdk just won't be available. `steamworks.init()` will throw but
+// we'll only print a warning and continue launching.
+/** @type {Omit<steamworks.Client, "init" | "runCallbacks">?} */
+let steamClient = null;
+try {
+	const appIdFlag = app.commandLine.getSwitchValue("appid");
+	let appId = undefined;
+	if (appIdFlag) {
+		appId = parseInt(appIdFlag);
+	}
+	steamClient = steamworks.init(appId);
+} catch (e) {
+	// TODO: At the moment we only use the steamworks sdk for determining the right cloud sync path,
+	// so this warning would only cause developers to think the steamworks sdk can be accessed.
+	// These warnings should be uncommented once the steamworks sdk is exposed somehow.
+	if (e instanceof Error) {
+		if (e.message.includes("No appID found")) {
+			// console.warn("No steam appid was specified. Launch with --appid=<your app id> if you wish to make calls to the steamworks sdk. This is only required during development, when launched through steam, the appid will automatically be determined.");
+		} else if (
+			e.message.includes("Steam is probably not running") || // Windows and Linux
+			e.message.includes("Could not determine Steam client install directory.") // macOS
+		) {
+			// Normally applications would call restartAppIfNecessary(appId) here, but that doesn't really make sense in our case
+			// since steam-web-wrap will be used for multiple applications. So we wouldn't know which appId to start.
+			// console.warn("Steam doesn't appear to be running. Make sure to launch Steam if you wish to make calls to the steamworks sdk.")
+		} else {
+			throw e;
+		}
+	} else {
+		throw e;
+	}
+}
+
+let sessionsPath;
+if (process.platform == "win32") {
+	const localAppData = process.env.LOCALAPPDATA;
+	if (!localAppData) {
+		throw new Error("Assertion failed, no LOCALAPPDATA env has been set");
+	}
+	sessionsPath = path.resolve(localAppData, "steam-web-wrap");
+} else if (process.platform == "darwin") {
+	sessionsPath = path.resolve(app.getPath("appData"), "steam-web-wrap");
+} else if (process.platform == "linux") {
+	const homedir = require("os").homedir();
+	sessionsPath = path.resolve(homedir, ".local/share/steam-web-wrap");
+} else {
+	throw new Error("Unknown platform");
+}
+
+let sessionDataPath;
+if (steamClient) {
+	const appId = steamClient.utils.getAppId();
+	const steamId = steamClient.localplayer.getSteamId();
+	sessionDataPath = path.resolve(sessionsPath, String(appId), String(steamId.steamId64));
+} else {
+	sessionDataPath = path.resolve(sessionsPath, "unknown-apps");
+}
+app.setPath("sessionData", sessionDataPath);
 
 app.whenReady().then(async () => {
 	/**
