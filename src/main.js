@@ -45,29 +45,30 @@ try {
 	}
 }
 
-let sessionsPath;
+let steamWebWrapDataPath;
 if (process.platform == "win32") {
 	const localAppData = process.env.LOCALAPPDATA;
 	if (!localAppData) {
 		throw new Error("Assertion failed, no LOCALAPPDATA env has been set");
 	}
-	sessionsPath = path.resolve(localAppData, "steam-web-wrap");
+	steamWebWrapDataPath = path.resolve(localAppData, "steam-web-wrap");
 } else if (process.platform == "darwin") {
-	sessionsPath = path.resolve(app.getPath("appData"), "steam-web-wrap");
+	steamWebWrapDataPath = path.resolve(app.getPath("appData"), "steam-web-wrap");
 } else if (process.platform == "linux") {
 	const homedir = require("os").homedir();
-	sessionsPath = path.resolve(homedir, ".local/share/steam-web-wrap");
+	steamWebWrapDataPath = path.resolve(homedir, ".local/share/steam-web-wrap");
 } else {
 	throw new Error("Unknown platform");
 }
+const gamesPath = path.resolve(steamWebWrapDataPath, "games");
 
 let sessionDataPath;
 if (steamClient) {
 	const appId = steamClient.utils.getAppId();
 	const steamId = steamClient.localplayer.getSteamId();
-	sessionDataPath = path.resolve(sessionsPath, String(appId), String(steamId.steamId64));
+	sessionDataPath = path.resolve(gamesPath, String(appId), String(steamId.steamId64));
 } else {
-	sessionDataPath = path.resolve(sessionsPath, "unknown-apps");
+	sessionDataPath = path.resolve(gamesPath, "unknown-games");
 }
 app.setPath("sessionData", sessionDataPath);
 
