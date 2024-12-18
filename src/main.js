@@ -37,6 +37,10 @@ try {
 			// Normally applications would call restartAppIfNecessary(appId) here, but that doesn't really make sense in our case
 			// since steam-web-wrap will be used for multiple applications. So we wouldn't know which appId to start.
 			// console.warn("Steam doesn't appear to be running. Make sure to launch Steam if you wish to make calls to the steamworks sdk.")
+		} else if (e.message.includes("ConnectToGlobalUser failed")) {
+			console.warn(
+				"No user appears to be logged in in the Steam client. Log in to Steam if you wish to make calls to the steamworks sdk.",
+			);
 		} else {
 			throw e;
 		}
