@@ -26,7 +26,14 @@ const appPaths = await packager({
 	arch: "x64",
 	overwrite: true,
 	out: platformParentDir,
-	ignore: [/^\/\.gitignore$/gi, /^\/\.gitattributes$/gi, /^\/\.prettierrc$/gi, /^\/out$/gi, /^\/scripts$/gi],
+	ignore: [
+		/^\/\.gitignore$/gi,
+		/^\/\.gitattributes$/gi,
+		/^\/\.prettierrc$/gi,
+		/^\/out$/gi,
+		/^\/scripts$/gi,
+		/^\/jsconfig\.json$/gi,
+	],
 });
 
 if (appPaths.length != 1) {

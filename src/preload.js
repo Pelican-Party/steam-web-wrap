@@ -9,6 +9,9 @@ let fullscreenState = false;
 
 contextBridge.exposeInMainWorld("_steamWebWrapInternal", {
 	exitFullScreen: () => ipcRenderer.invoke("exitFullScreen"),
+	/**
+	 * @param {boolean} state
+	 */
 	setFullscreenState: (state) => {
 		fullscreenState = state;
 	},

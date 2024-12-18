@@ -18,12 +18,12 @@
 		},
 	});
 
-	const originalGetFullscreenElement = Object.getOwnPropertyDescriptor(Document.prototype, "fullscreenElement").get;
+	const originalGetFullscreenElement = Object.getOwnPropertyDescriptor(Document.prototype, "fullscreenElement")?.get;
 
 	Object.defineProperty(document, "fullscreenElement", {
 		configurable: true,
 		get: () => {
-			const original = originalGetFullscreenElement.call(document);
+			const original = originalGetFullscreenElement?.call(document);
 			if (original) return original;
 			if (_steamWebWrapInternal.getFullscreenState()) {
 				return document.body;

@@ -1,6 +1,7 @@
 const path = require("node:path");
 const fs = require("node:fs/promises");
-const { app, shell, BrowserWindow, ipcMain, dialog, Menu } = require("electron/main");
+const { shell } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, Menu } = require("electron/main");
 const { buildMenu } = require("./buildMenu.js");
 const steamworks = require("steamworks.js");
 
@@ -177,11 +178,11 @@ app.whenReady().then(async () => {
 
 	try {
 		await win.loadURL(url);
-	} catch (e) {
-		if (e.code == "ERR_INTERNET_DISCONNECTED") {
+	} catch (error) {
+		if (error instanceof Error && "code" in error && error.code == "ERR_INTERNET_DISCONNECTED") {
 			await win.loadFile("src/youAreOffline.html");
 		} else {
-			throw e;
+			throw error;
 		}
 	}
 	win.show();
