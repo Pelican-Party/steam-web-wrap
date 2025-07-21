@@ -44,7 +44,7 @@ const buildOutDir = appPaths[0];
 // Electron apps run fine when launched directly, but it seems like with the steam linux runtime enabled
 // (i.e. when launching through steam) it takes a good minute or so for the app to launch.
 // Disabling the sandbox seems to fix this. I'm not happy about this,
-// especially since we'reloading remote content, but I haven't been able to find a better solution unfortunately.
+// especially since we're loading remote content, but I haven't been able to find a better solution unfortunately.
 
 // Electron has no way to programatically disable the sandbox globally,
 // the only option is to launch the electron app with --no-sandbox.

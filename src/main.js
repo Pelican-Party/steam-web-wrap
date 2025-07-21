@@ -1,11 +1,23 @@
 const path = require("node:path");
-const fs = require("node:fs/promises");
 const { shell } = require("electron");
 const { app, BrowserWindow, ipcMain, dialog, Menu } = require("electron/main");
 const { buildMenu } = require("./buildMenu.js");
-const steamworks = require("steamworks.js");
+const steamworks = require("@jespertheend/steamworks.js");
+const { initializeSteamworkCalls } = require("./steamworksCalls.js");
 
 steamworks.electronEnableSteamOverlay();
+
+/**
+ * This argument should really only be used during development of steam-web-wrap.
+ * I.e. when running through `npm run start`.
+ * Normally the process crashes on unhandled rejections, but since calls to `executeJavaScript()`
+ * might throw errors during development, which can only be debugged by looking at devtools,
+ * we want to prevent the process from closing in that case.
+ * @TODO this comment is outdated as we now use it for other things as well. Either way
+ * we should probably try to combine this with --show-debug-menu at some point.
+ */
+const debug = process.argv.includes("--debug-dev");
+
 
 // We will try to load the steamworks sdk in case Steam Web Wrap was launched through steam.
 // If it wasn't launched through steam, developers can use the --appid= command line flag or maybe even a
@@ -14,8 +26,12 @@ steamworks.electronEnableSteamOverlay();
 // just trying to experiment with steam-web-wrap. We'll still want to launch in that case,
 // the steamworks sdk just won't be available. `steamworks.init()` will throw but
 // we'll only print a warning and continue launching.
-/** @type {Omit<steamworks.Client, "init" | "runCallbacks">?} */
+/** @typedef {Omit<steamworks.Client, "init" | "runCallbacks">} SteamClient */
+/** @type {SteamClient?} */
 let steamClient = null;
+/** @typedef {"unknown" | "no-app-id" | "not-running" | "not-logged-in"} SteamNotInitializedWarning */
+/** @type {SteamNotInitializedWarning?} */
+let steamNotInitializedWarning = "unknown";
 try {
 	const appIdFlag = app.commandLine.getSwitchValue("appid");
 	let appId = undefined;
@@ -23,24 +39,20 @@ try {
 		appId = parseInt(appIdFlag);
 	}
 	steamClient = steamworks.init(appId);
+	steamNotInitializedWarning = null;
 } catch (e) {
-	// TODO: At the moment we only use the steamworks sdk for determining the right cloud sync path,
-	// so this warning would only cause developers to think the steamworks sdk can be accessed.
-	// These warnings should be uncommented once the steamworks sdk is exposed somehow.
 	if (e instanceof Error) {
 		if (e.message.includes("No appID found")) {
-			// console.warn("No steam appid was specified. Launch with --appid=<your app id> if you wish to make calls to the steamworks sdk. This is only required during development, when launched through steam, the appid will automatically be determined.");
+			steamNotInitializedWarning = "no-app-id";
 		} else if (
 			e.message.includes("Steam is probably not running") || // Windows and Linux
 			e.message.includes("Could not determine Steam client install directory.") // macOS
 		) {
 			// Normally applications would call restartAppIfNecessary(appId) here, but that doesn't really make sense in our case
 			// since steam-web-wrap will be used for multiple applications. So we wouldn't know which appId to start.
-			// console.warn("Steam doesn't appear to be running. Make sure to launch Steam if you wish to make calls to the steamworks sdk.")
+			steamNotInitializedWarning = "not-running";
 		} else if (e.message.includes("ConnectToGlobalUser failed")) {
-			console.warn(
-				"No user appears to be logged in in the Steam client. Log in to Steam if you wish to make calls to the steamworks sdk.",
-			);
+			steamNotInitializedWarning = "not-logged-in";
 		} else {
 			throw e;
 		}
@@ -77,15 +89,6 @@ if (steamClient) {
 app.setPath("sessionData", sessionDataPath);
 
 app.whenReady().then(async () => {
-	/**
-	 * This argument should really only be used during development of steam-web-wrap.
-	 * I.e. when running through `npm run start`.
-	 * Normally the process crashes on unhandled rejections, but since calls to `executeJavaScript()`
-	 * might throw errors during development, which can only be debugged by looking at devtools,
-	 * we want to prevent the process from closing in that case.
-	 */
-	const debug = process.argv.includes("--debug-dev");
-
 	process.on("unhandledRejection", (error) => {
 		console.error("unhandled rejection:", error);
 		if (!debug) {
@@ -113,6 +116,12 @@ app.whenReady().then(async () => {
 		app.quit();
 	});
 
+	/** @type {import("./preload.js").AdditionalPreloadData} */
+	const additionalPreloadData = {
+		debug,
+		steamNotInitializedWarning,
+	}
+
 	const win = new BrowserWindow({
 		width: 800,
 		height: 600,
@@ -123,6 +132,7 @@ app.whenReady().then(async () => {
 		webPreferences: {
 			preload: path.join(__dirname, "preload.js"),
 			sandbox: false,
+			additionalArguments: ["--additionalPreloadData=" + JSON.stringify(additionalPreloadData)],
 		},
 	});
 	if (process.platform == "darwin") {
@@ -144,22 +154,7 @@ app.whenReady().then(async () => {
 		win.setFullScreen(false);
 	});
 
-	const sameContextPreloadPath = path.join(__dirname, "sameContextPreload.js");
-	const sameContextPreloadContent = await fs.readFile(sameContextPreloadPath, { encoding: "utf8" });
-	const contextPreloadPromise = (async () => {
-		try {
-			await win.webContents.executeJavaScript(sameContextPreloadContent);
-		} catch (e) {
-			if (e instanceof Error && e.message.includes("Script failed to execute")) {
-				console.error("sameContextPreload.js contains an error, check the browser console for details");
-				if (!debug) {
-					throw e;
-				}
-			} else {
-				throw e;
-			}
-		}
-	})();
+	initializeSteamworkCalls(ipcMain, win.webContents, steamClient, debug);
 
 	/**
 	 * @param {boolean} state
@@ -191,8 +186,6 @@ app.whenReady().then(async () => {
 		}
 	}
 	win.show();
-
-	await contextPreloadPromise;
 });
 
 app.on("window-all-closed", () => {
