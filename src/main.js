@@ -7,17 +7,7 @@ const { initializeSteamworkCalls } = require("./steamworksCalls.js");
 
 steamworks.electronEnableSteamOverlay();
 
-/**
- * This argument should really only be used during development of steam-web-wrap.
- * I.e. when running through `npm run start`.
- * Normally the process crashes on unhandled rejections, but since calls to `executeJavaScript()`
- * might throw errors during development, which can only be debugged by looking at devtools,
- * we want to prevent the process from closing in that case.
- * @TODO this comment is outdated as we now use it for other things as well. Either way
- * we should probably try to combine this with --show-debug-menu at some point.
- */
-const debug = process.argv.includes("--debug-dev");
-
+const debug = process.argv.includes("--debug-mode") || process.argv.includes("-d");
 
 // We will try to load the steamworks sdk in case Steam Web Wrap was launched through steam.
 // If it wasn't launched through steam, developers can use the --appid= command line flag or maybe even a
@@ -91,6 +81,9 @@ app.setPath("sessionData", sessionDataPath);
 app.whenReady().then(async () => {
 	process.on("unhandledRejection", (error) => {
 		console.error("unhandled rejection:", error);
+		// Normally we want to crash the application when an error occurs,
+		// but since calls to `executeJavaScript()` might throw errors, which can only be debugged by looking at devtools,
+		// we want to prevent the browser process from closing in that case.
 		if (!debug) {
 			app.exit();
 		}
@@ -108,9 +101,8 @@ app.whenReady().then(async () => {
 		fullscreen = false;
 	}
 
-	const showDebugMenu = process.argv.includes("--show-debug-menu");
-	if (showDebugMenu) fullscreen = false;
-	const menu = buildMenu(showDebugMenu);
+	if (debug) fullscreen = false;
+	const menu = buildMenu(debug);
 
 	ipcMain.handle("quitApp", () => {
 		app.quit();
@@ -127,7 +119,7 @@ app.whenReady().then(async () => {
 		height: 600,
 		fullscreen,
 		fullscreenable: true,
-		autoHideMenuBar: !showDebugMenu,
+		autoHideMenuBar: !debug,
 		show: false,
 		webPreferences: {
 			preload: path.join(__dirname, "preload.js"),
