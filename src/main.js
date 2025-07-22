@@ -9,6 +9,17 @@ steamworks.electronEnableSteamOverlay();
 
 const debug = process.argv.includes("--debug-mode") || process.argv.includes("-d");
 
+let url = null;
+try {
+	url = new URL(app.commandLine.getSwitchValue("url"));
+} catch {
+	// Ignore errors, url will remain `null`
+}
+
+if (debug && url) {
+	app.commandLine.appendSwitch("unsafely-treat-insecure-origin-as-secure", url.origin);
+}
+
 // We will try to load the steamworks sdk in case Steam Web Wrap was launched through steam.
 // If it wasn't launched through steam, developers can use the --appid= command line flag or maybe even a
 // steam_appid.txt file to set their app id for development.
@@ -89,7 +100,6 @@ app.whenReady().then(async () => {
 		}
 	});
 
-	const url = app.commandLine.getSwitchValue("url");
 	if (!url) {
 		dialog.showErrorBox("Error", "No url was provided, provide one using the --url= command line argument.");
 		app.quit();
@@ -169,7 +179,7 @@ app.whenReady().then(async () => {
 	setFullscreenState(fullscreen);
 
 	try {
-		await win.loadURL(url);
+		await win.loadURL(url.href);
 	} catch (error) {
 		if (error instanceof Error && "code" in error && error.code == "ERR_INTERNET_DISCONNECTED") {
 			await win.loadFile("src/youAreOffline.html");
