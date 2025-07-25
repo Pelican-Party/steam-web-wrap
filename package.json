@@ -26,6 +26,6 @@
 		"prettier": "3.4.1"
 	},
 	"dependencies": {
-		"@jespertheend/steamworks.js": "^0.0.2"
+		"@jespertheend/steamworks.js": "0.2.0"
 	}
 }
