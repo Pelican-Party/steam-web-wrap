@@ -37,8 +37,8 @@ const sameContextPreloadContent = fs.readFileSync(sameContextPreloadPath, { enco
 
 process.once("document-start", () => {
 	const script = document.createElement("script");
-    script.textContent = sameContextPreloadContent;
-    document.documentElement.appendChild(script);
+	script.textContent = sameContextPreloadContent;
+	document.documentElement.appendChild(script);
 });
 
 /**
@@ -64,11 +64,14 @@ let steamNotInitializedWarningMessage = null;
 if (additionalPreloadData.steamNotInitializedWarning) {
 	const warning = additionalPreloadData.steamNotInitializedWarning;
 	if (warning == "no-app-id") {
-		steamNotInitializedWarningMessage = "No steam appid was specified. Launch with --appid=<your app id> if you wish to make calls to the steamworks sdk. This is only required during development. When launched through steam, the appid will automatically be determined.";
+		steamNotInitializedWarningMessage =
+			"No steam appid was specified. Launch with --appid=<your app id> if you wish to make calls to the steamworks sdk. This is only required during development. When launched through steam, the appid will automatically be determined.";
 	} else if (warning == "not-running") {
-		steamNotInitializedWarningMessage = "Steam doesn't appear to be running. Make sure to launch Steam if you wish to make calls to the steamworks sdk.";
+		steamNotInitializedWarningMessage =
+			"Steam doesn't appear to be running. Make sure to launch Steam if you wish to make calls to the steamworks sdk.";
 	} else if (warning == "not-logged-in") {
-		steamNotInitializedWarningMessage = "No user appears to be logged in in the Steam client. Log in to Steam if you wish to make calls to the steamworks sdk.";
+		steamNotInitializedWarningMessage =
+			"No user appears to be logged in in the Steam client. Log in to Steam if you wish to make calls to the steamworks sdk.";
 	} else {
 		steamNotInitializedWarningMessage = "An unknown error occurred while initializing the steamworks sdk.";
 	}
@@ -98,7 +101,8 @@ contextBridge.exposeInMainWorld("_steamWebWrapInternal", {
 	 * @param {string} steamCallback
 	 * @param {number} id
 	 */
-	registerSteamworksCallback: (steamCallback, id) => invokeWithErrorHandling("registerSteamworksCallback", steamCallback, id),
+	registerSteamworksCallback: (steamCallback, id) =>
+		invokeWithErrorHandling("registerSteamworksCallback", steamCallback, id),
 	/**
 	 * @param {(id: number, args: unknown[]) => void} cb
 	 */

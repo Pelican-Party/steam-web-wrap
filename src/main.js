@@ -122,7 +122,7 @@ app.whenReady().then(async () => {
 	const additionalPreloadData = {
 		debug,
 		steamNotInitializedWarning,
-	}
+	};
 
 	const win = new BrowserWindow({
 		width: 800,

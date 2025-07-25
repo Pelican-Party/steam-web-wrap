@@ -97,7 +97,7 @@
 						if (typeof property == "symbol") return;
 						callbackTypesTarget[property] = property;
 						return property;
-					}
+					},
 				}),
 				/**
 				 * @param {string} steamCallback
@@ -110,8 +110,8 @@
 					createdCallbacks.set(lastCallbackId, handler);
 					_steamWebWrapInternal.registerSteamworksCallback(steamCallback, lastCallbackId);
 					return handle;
-				}
-			}
+				},
+			};
 		}
 		const interfaceTarget = {};
 		const interfaceProxy = new Proxy(interfaceTarget, {
@@ -121,16 +121,16 @@
 				/**
 				 * @param  {...unknown[]} args
 				 */
-				const fn = async function(...args) {
+				const fn = async function (...args) {
 					const result = await _steamWebWrapInternal.steamworksCall({
 						interface: interfaceProperty,
 						method: property,
 						args,
 					});
 					return result;
-				}
+				};
 				return fn;
-			}
+			},
 		});
 		populateSteamworksProps(interfaceTarget, [interfaceProperty], () => {});
 		return interfaceProxy;
@@ -150,7 +150,7 @@
 				get: () => interfaceProxy,
 			});
 			return interfaceProxy;
-		}
+		},
 	});
 
 	let didShowWarning = false;
@@ -166,8 +166,8 @@
 			}
 
 			return steamworksProxy;
-		}
-	})
+		},
+	});
 
 	populateSteamworksProps(steamworksTarget, [], {});
 })();

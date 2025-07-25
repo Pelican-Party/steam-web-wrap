@@ -14,5 +14,5 @@ declare global {
 		onSteamworksCallbackFired(cb: (id: number, args: unkown[]) => void): Promise<void>;
 	};
 
-	var steamworks: {}
+	var steamworks: {};
 }
