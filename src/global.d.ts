@@ -3,7 +3,7 @@ import { SteamworksCall } from "./steamworksCalls.js";
 declare global {
 	var _steamWebWrapInternal: {
 		debug: boolean;
-		steamNotInitializedWarningMessage: string?;
+		steamNotInitializedWarningMessage: string | null;
 		getFullscreenState(): boolean;
 		exitFullScreen(): Promise<void>;
 		quitApp(): void;
@@ -11,7 +11,7 @@ declare global {
 		getSteamworksProps(path: string[]): Promise<string[]>;
 		registerSteamworksCallback(steamCallback: string, id: number): Promise<void>;
 		disconnectSteamworksCallback(id: number): Promise<void>;
-		onSteamworksCallbackFired(cb: (id: number, args: unkown[]) => void): Promise<void>;
+		onSteamworksCallbackFired(cb: (id: number, args: unknown[]) => void): Promise<void>;
 	};
 
 	var steamworks: {};

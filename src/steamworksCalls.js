@@ -20,7 +20,7 @@ const createdCallbackHandles = new Map();
  * @param {import("./main.js").SteamClient?} steamClient
  * @param {boolean} debug
  */
-exports.initializeSteamworkCalls = function (ipcMain, webContents, steamClient, debug) {
+export function initializeSteamworkCalls(ipcMain, webContents, steamClient, debug) {
 	function getSteamClient() {
 		if (steamClient) return steamClient;
 		throw new Error("Assertion failed: Steamworks sdk is not initialized");

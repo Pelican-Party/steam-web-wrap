@@ -1,9 +1,11 @@
-const path = require("node:path");
-const { shell } = require("electron");
-const { app, BrowserWindow, ipcMain, dialog, Menu } = require("electron/main");
-const { buildMenu } = require("./buildMenu.js");
-const steamworks = require("@jespertheend/steamworks.js");
-const { initializeSteamworkCalls } = require("./steamworksCalls.js");
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { shell } from "electron";
+import { app, BrowserWindow, ipcMain, dialog, Menu } from "electron/main";
+import { buildMenu } from "./buildMenu.js";
+import steamworks from "@jespertheend/steamworks.js";
+import { initializeSteamworkCalls } from "./steamworksCalls.js";
+import { homedir } from "node:os";
 
 steamworks.electronEnableSteamOverlay();
 
@@ -72,8 +74,7 @@ if (process.platform == "win32") {
 } else if (process.platform == "darwin") {
 	steamWebWrapDataPath = path.resolve(app.getPath("appData"), "steam-web-wrap");
 } else if (process.platform == "linux") {
-	const homedir = require("os").homedir();
-	steamWebWrapDataPath = path.resolve(homedir, ".local/share/steam-web-wrap");
+	steamWebWrapDataPath = path.resolve(homedir(), ".local/share/steam-web-wrap");
 } else {
 	throw new Error("Unknown platform");
 }
@@ -118,7 +119,7 @@ app.whenReady().then(async () => {
 		app.quit();
 	});
 
-	/** @type {import("./preload.js").AdditionalPreloadData} */
+	/** @type {import("./preload.cjs").AdditionalPreloadData} */
 	const additionalPreloadData = {
 		debug,
 		steamNotInitializedWarning,
@@ -132,7 +133,7 @@ app.whenReady().then(async () => {
 		autoHideMenuBar: !debug,
 		show: false,
 		webPreferences: {
-			preload: path.join(__dirname, "preload.js"),
+			preload: path.join(path.dirname(fileURLToPath(import.meta.url)), "preload.cjs"),
 			sandbox: false,
 			additionalArguments: ["--additionalPreloadData=" + JSON.stringify(additionalPreloadData)],
 		},

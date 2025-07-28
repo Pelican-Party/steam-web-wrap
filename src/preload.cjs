@@ -12,7 +12,7 @@ let fullscreenState = false;
 /**
  * @typedef AdditionalPreloadData
  * @property {boolean} debug
- * @property {import("./main.js").SteamNotInitializedWarning?} steamNotInitializedWarning
+ * @property {import("./main.js", {with: {"resolution-mode": "import"}}).SteamNotInitializedWarning?} steamNotInitializedWarning
  */
 /** @type {AdditionalPreloadData?} */
 let additionalPreloadData = null;
@@ -90,7 +90,7 @@ contextBridge.exposeInMainWorld("_steamWebWrapInternal", {
 	getFullscreenState: () => fullscreenState,
 	quitApp: () => invokeWithErrorHandling("quitApp"),
 	/**
-	 * @param {import("./steamworksCalls.js").SteamworksCall} call
+	 * @param {import("./steamworksCalls.js", {with: {"resolution-mode": "import"}}).SteamworksCall} call
 	 */
 	steamworksCall: (call) => invokeWithErrorHandling("steamworksCall", call),
 	/**

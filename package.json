@@ -3,6 +3,7 @@
 	"version": "0.1.0",
 	"description": "Easily turn your web games into native apps for publishing on Steam.",
 	"main": "src/main.js",
+	"type": "module",
 	"scripts": {
 		"start": "electron . --url=https://steam-web-wrap-demo.deno.dev/ --debug-mode --appid=480",
 		"fmt": "prettier . --write",

@@ -1,9 +1,9 @@
-const { Menu } = require("electron/main");
+import { Menu } from "electron/main";
 
 /**
  * @param {boolean} enableDebugMenu
  */
-function buildMenu(enableDebugMenu) {
+export function buildMenu(enableDebugMenu) {
 	/** @type {import("electron").MenuItemConstructorOptions[]} */
 	const template = [];
 
@@ -25,5 +25,3 @@ function buildMenu(enableDebugMenu) {
 	const menu = Menu.buildFromTemplate(template);
 	return menu;
 }
-
-exports.buildMenu = buildMenu;

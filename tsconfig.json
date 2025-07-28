@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"noEmit": true,
+		"target": "esnext",
+		"checkJs": true,
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
+		"allowSyntheticDefaultImports": true,
+		"useDefineForClassFields": true,
+		"strict": true,
+		"exactOptionalPropertyTypes": true
+	},
+	"include": ["src/**/*.js", "src/**/*.d.ts", "src/preload.cjs"]
+}
