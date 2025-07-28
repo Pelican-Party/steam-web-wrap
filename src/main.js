@@ -157,6 +157,11 @@ app.whenReady().then(async () => {
 		win.setFullScreen(false);
 	});
 
+	ipcMain.handle("bringToFront", () => {
+		win.hide();
+		win.show();
+	});
+
 	initializeSteamworkCalls(ipcMain, win.webContents, steamClient, debug);
 
 	/**

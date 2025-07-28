@@ -64,4 +64,4 @@ export function initializeSteamworkCalls(ipcMain, webContents, steamClient, debu
 			return Object.getOwnPropertyNames(obj);
 		});
 	}
-};
+}
