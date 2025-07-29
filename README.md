@@ -40,4 +40,10 @@ or on linux:
 
 You may also use the url of one of your favorite web games.
 
-For more info on how to develop your game and publish it to Steam, head over to the [GitHub wiki pages](https://github.com/Pelican-Party/steam-web-wrap/wiki/Usage).
+For more info on how to develop your game, head over to the [GitHub wiki pages](https://github.com/Pelican-Party/steam-web-wrap/wiki/Usage).
+
+## Publishing to Steam
+
+The great news is that for the most part you can just directly upload the [zip files from the releases page](https://github.com/Pelican-Party/steam-web-wrap/releases/) to Steam, no building needed!
+
+As with any game though, you will need to configure your game a fair bit on Steam's dashboard. We have extensive documentation on how to do this on our [GitHub wiki pages](https://github.com/Pelican-Party/steam-web-wrap/wiki/Uploading-to-Steam).
