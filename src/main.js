@@ -6,7 +6,7 @@ import steamworks from "@jespertheend/steamworks.js";
 import { initializeSteamworkCalls } from "./steamworksCalls.js";
 import { homedir } from "node:os";
 import { openExternalUrl } from "./windowOpenHandler.js";
-import { logConsoleMessage } from "./logConsoleMessage.js";
+import { initIconManagement } from "./appIconManagement/appIconManagement.js";
 
 steamworks.electronEnableSteamOverlay();
 
@@ -153,6 +153,8 @@ app.whenReady().then(async () => {
 		openExternalUrl(url, win);
 		return { action: "deny" };
 	});
+
+	initIconManagement(win);
 
 	ipcMain.handle("exitFullScreen", () => {
 		win.setFullScreen(false);
