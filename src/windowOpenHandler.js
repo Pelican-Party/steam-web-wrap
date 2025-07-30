@@ -8,21 +8,19 @@
 
 import process from "node:process";
 import { spawn } from "child_process";
+import { logConsoleMessage } from "./logConsoleMessage.js";
 
 /**
  * @param {string} url
- * @param {Electron.WebContents} webContents
+ * @param {Electron.BrowserWindow} window
  */
-export function openExternalUrl(url, webContents) {
+export function openExternalUrl(url, window) {
 	let sanitizedUrl;
 	try {
 		sanitizedUrl = sanitizeUrl(url);
 	} catch (error) {
 		if (error instanceof Error) {
-			console.warn(error.message);
-			webContents.executeJavaScript(`
-				console.warn("${error.message.replaceAll('"', '\\"')}");
-			`);
+			logConsoleMessage(window, "warn", error.message);
 			return null;
 		} else {
 			throw error;

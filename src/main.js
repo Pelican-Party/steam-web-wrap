@@ -6,6 +6,7 @@ import steamworks from "@jespertheend/steamworks.js";
 import { initializeSteamworkCalls } from "./steamworksCalls.js";
 import { homedir } from "node:os";
 import { openExternalUrl } from "./windowOpenHandler.js";
+import { logConsoleMessage } from "./logConsoleMessage.js";
 
 steamworks.electronEnableSteamOverlay();
 
@@ -149,7 +150,7 @@ app.whenReady().then(async () => {
 	}
 
 	win.webContents.setWindowOpenHandler(({ url }) => {
-		openExternalUrl(url, win.webContents);
+		openExternalUrl(url, win);
 		return { action: "deny" };
 	});
 
