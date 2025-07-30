@@ -1,11 +1,11 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { shell } from "electron";
 import { app, BrowserWindow, ipcMain, dialog, Menu } from "electron/main";
 import { buildMenu } from "./buildMenu.js";
 import steamworks from "@jespertheend/steamworks.js";
 import { initializeSteamworkCalls } from "./steamworksCalls.js";
 import { homedir } from "node:os";
+import { openExternalUrl } from "./windowOpenHandler.js";
 
 steamworks.electronEnableSteamOverlay();
 
@@ -149,7 +149,7 @@ app.whenReady().then(async () => {
 	}
 
 	win.webContents.setWindowOpenHandler(({ url }) => {
-		shell.openExternal(url);
+		openExternalUrl(url, win.webContents);
 		return { action: "deny" };
 	});
 
