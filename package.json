@@ -1,6 +1,6 @@
 {
 	"name": "steam-web-wrap",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Easily turn your web games into native apps for publishing on Steam.",
 	"main": "src/main.js",
 	"type": "module",
