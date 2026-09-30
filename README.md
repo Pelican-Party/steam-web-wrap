@@ -29,13 +29,13 @@ Steam Web Wrap is a prebuilt application which you can use to publish web games 
 To get started quickly, download the latest version for your platform from [the releases page](https://github.com/Pelican-Party/steam-web-wrap/releases). Once extracted, launch it from the command line using:
 
 ```
-.\steam-web-wrap\launch.exe --url=https://steam-web-wrap-demo.deno.dev/
+.\steam-web-wrap\launch.exe --url=https://steam-web-wrap-demo.jespertheend.deno.net/
 ```
 
 or on linux:
 
 ```
-./steam-web-wrap/launch.sh --url=https://steam-web-wrap-demo.deno.dev/
+./steam-web-wrap/launch.sh --url=https://steam-web-wrap-demo.jespertheend.deno.net/
 ```
 
 You may also use the url of one of your favorite web games.

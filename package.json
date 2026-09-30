@@ -5,7 +5,7 @@
 	"main": "src/main.js",
 	"type": "module",
 	"scripts": {
-		"start": "electron . --url=https://steam-web-wrap-demo.deno.dev/ --debug-mode --appid=480",
+		"start": "electron . --url=https://steam-web-wrap-demo.jespertheend.deno.net/ --debug-mode --appid=480",
 		"fmt": "prettier . --write",
 		"build-linux": "node ./scripts/build.mjs linux",
 		"build-windows": "node ./scripts/build.mjs windows"
