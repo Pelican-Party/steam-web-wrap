@@ -36,12 +36,33 @@
 	};
 
 	/**
+	 * @type {Object.<string, Object.<string, number | bigint | undefined> | undefined>}
+	 */
+	const constants = {
+		input: {
+			STEAM_INPUT_HANDLE_ALL_CONTROLLERS: 2n ** 64n - 1n,
+		},
+	};
+
+	/**
 	 * @param {{}} target
 	 * @param {string[]} path
 	 * @param {any} propValues
 	 */
 	async function populateSteamworksProps(target, path, propValues) {
 		if (!_steamWebWrapInternal.debug) return;
+
+		if (path.length == 1) {
+			const interfaceConstants = constants[path[0]];
+			if (interfaceConstants) {
+				for (const [prop, value] of Object.entries(interfaceConstants)) {
+					Object.defineProperty(target, prop, {
+						configurable: true,
+						value,
+					});
+				}
+			}
+		}
 
 		const props = await _steamWebWrapInternal.getSteamworksProps(path);
 		for (const prop of props) {
@@ -113,10 +134,18 @@
 				},
 			};
 		}
+
+		const interfaceConstants = constants[interfaceProperty];
+
 		const interfaceTarget = {};
 		const interfaceProxy = new Proxy(interfaceTarget, {
 			get(_target, property) {
 				if (typeof property == "symbol") return;
+
+				if (interfaceConstants) {
+					const propertyConstant = interfaceConstants[property];
+					if (propertyConstant) return propertyConstant;
+				}
 
 				/**
 				 * @param  {...unknown[]} args
