@@ -14,7 +14,8 @@ Steam Web Wrap is a prebuilt application which you can use to publish web games 
     - Fixes have been made to make sure applications can be launched with the [Steam Linux Runtime](https://gitlab.steamos.cloud/steamrt/steam-runtime-tools/-/blob/main/docs/slr-for-game-developers.md)
 - Loads your online game from an URL provided by you (loading from local files may be added later)
 - Existing browser APIs are reused as much as possible in order to make porting existing games easier
-- Extra functionality is exposed through the `steamWebWrap` object such as `steamWebWrap.quitApp()`
+- Comes with [steamworks.js](https://github.com/jespertheend/steamworks.js) bundled exposed through `globalThis.steamworks`
+- Extra functionality is exposed through the `globalThis.steamWebWrap` object such as `steamWebWrap.quitApp()`
 
 ## What this isn't
 
