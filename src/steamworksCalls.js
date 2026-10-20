@@ -75,12 +75,7 @@ export function initializeSteamworkCalls(ipcMain, webContents, steamClient, debu
 	});
 
 	ipcMain.handle("registerSteamworksCallback", (_, steamCallback, id) => {
-		// @ts-ignore
-		const callbackType = getSteamClient().callback.SteamCallback[steamCallback];
-		if (!callbackType) {
-			throw new Error(`${steamCallback} is not a valid callback type`);
-		}
-		const handle = getSteamClient().callback.register(callbackType, (...args) => {
+		const handle = getSteamClient().callback.register(steamCallback, (...args) => {
 			webContents.send("steamworksCallbackFired", id, args);
 		});
 		createdCallbackHandles.set(id, handle);

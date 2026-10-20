@@ -115,22 +115,21 @@
 	function createInterface(interfaceProperty) {
 		if (interfaceProperty == "callback") {
 			/** @type {Object.<string, string>} */
-			const callbackTypesTarget = {};
-			populateSteamworksProps(callbackTypesTarget, ["callback", "SteamCallback"], "");
-			return {
+			const steamCallbackMembers = steamworksEnums.callback?.SteamCallback ?? {};
+			const callbackInterface = {
 				Handle: CallbackHandle,
-				SteamCallback: new Proxy(callbackTypesTarget, {
-					get(_target, property) {
-						if (typeof property == "symbol") return;
-						callbackTypesTarget[property] = property;
-						return property;
-					},
-				}),
+				SteamCallback: steamCallbackMembers,
 				/**
 				 * @param {string} steamCallback
 				 * @param {() => void} handler
 				 */
 				register(steamCallback, handler) {
+					if (!Object.hasOwn(steamCallbackMembers, steamCallback)) {
+						throw new Error(
+							`"${steamCallback}" is not a member of SteamCallback. ` +
+								`Valid members: ${Object.keys(steamCallbackMembers).join(", ")}`,
+						);
+					}
 					lastCallbackId++;
 					const handle = new CallbackHandle(lastCallbackId);
 					createdCallbackHandles.set(lastCallbackId, handle);
@@ -139,6 +138,8 @@
 					return handle;
 				},
 			};
+			populateSteamworksProps(callbackInterface, ["callback"], () => {});
+			return callbackInterface;
 		}
 
 		const interfaceConstants = constants[interfaceProperty];

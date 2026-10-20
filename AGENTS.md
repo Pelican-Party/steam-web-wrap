@@ -37,8 +37,9 @@ parser needs updating, not the list removing.
 - In `--debug-mode` the proxy also populates placeholder props via
   `getSteamworksProps` so devtools autocompletion works. Real values must not
   be clobbered by these placeholders, keep the `Object.hasOwn` checks intact
-- The `callback` interface passes callback names as strings over ipc, they are
-  resolved to enum values in the main process
+- The `callback` interface passes callback names as strings over ipc. The renderer
+  validates them against the generated `enums.callback.SteamCallback`, the main
+  process passes them straight to the sdk
 
 ## Design decisions
 
