@@ -4,6 +4,7 @@ declare global {
 	var _steamWebWrapInternal: {
 		debug: boolean;
 		steamNotInitializedWarningMessage: string | null;
+		steamworksEnums: (typeof import("./steamworksEnums.cjs"))["enums"];
 		getFullscreenState(): boolean;
 		exitFullScreen(): Promise<void>;
 		quitApp(): void;

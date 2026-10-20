@@ -16,4 +16,7 @@ jobs:
         with:
           node-version: 22.x
           cache: "npm"
+      - run: npm i
+      - name: Check that the generated steamworks enums are up to date
+        run: npm run generate-enums -- --check
       - run: npx prettier . --check

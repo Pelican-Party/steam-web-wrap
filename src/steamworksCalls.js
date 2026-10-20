@@ -4,6 +4,14 @@
  * This file itself is loaded by the main process, but it handles events fired by the renderer process.
  */
 
+// Generated from the type definitions of @jespertheend/steamworks.js
+import steamworksEnumsModule from "./steamworksEnums.cjs";
+/** @typedef {Record<string, Record<string, Record<string, any>>>} EnumsMap */
+/** @typedef {Record<string, (string | null)[]>} EnumArgTypesMap */
+// The import is inferred with exact keys, this widens it so dynamic lookups
+// type check and mismatches with the generated file shape fail here.
+const steamworksEnums = /** @type {{enums: EnumsMap, enumArgTypes: EnumArgTypesMap}} */ (steamworksEnumsModule);
+
 /**
  * @typedef SteamworksCall
  * @property {string} interface
@@ -13,6 +21,38 @@
 
 /** @type {Map<number, {disconnect: () => void}>} */
 const createdCallbackHandles = new Map();
+
+/**
+ * Converts enum member names (strings) in the arguments of a steamworks call
+ * to their numeric values. The generated `enumArgTypes` table knows which argument
+ * positions of which method expect which enum. Numbers, bigints and null are
+ * passed through and validated by the native sdk itself.
+ * @param {SteamworksCall} call
+ * @returns {unknown[]}
+ */
+function convertEnumArgs(call) {
+	const enumArgTypes = steamworksEnums.enumArgTypes[call.interface + "." + call.method];
+	if (!enumArgTypes) return call.args;
+	return call.args.map((arg, index) => {
+		const enumName = enumArgTypes[index];
+		if (!enumName || arg == null) return arg;
+		const members = steamworksEnums.enums[call.interface]?.[enumName];
+		if (!members) return arg;
+		if (typeof arg == "string") {
+			if (!Object.hasOwn(members, arg)) {
+				const allMembers = Object.keys(members);
+				const preview =
+					allMembers.length > 20 ? allMembers.slice(0, 20).join(", ") + ", ..." : allMembers.join(", ");
+				throw new Error(`"${arg}" is not a member of ${enumName}. Valid members: ${preview}`);
+			}
+			return members[arg];
+		}
+		if (typeof arg != "number" && typeof arg != "bigint") {
+			throw new Error(`Expected a member name or numeric value of the ${enumName} enum, but got ${typeof arg}`);
+		}
+		return arg;
+	});
+}
 
 /**
  * @param {Electron.IpcMain} ipcMain
@@ -28,8 +68,9 @@ export function initializeSteamworkCalls(ipcMain, webContents, steamClient, debu
 
 	ipcMain.handle("steamworksCall", async (_, call) => {
 		const castCall = /** @type {SteamworksCall} */ (call);
+		const args = convertEnumArgs(castCall);
 		// @ts-ignore
-		const result = getSteamClient()[castCall.interface][castCall.method](...castCall.args);
+		const result = getSteamClient()[castCall.interface][castCall.method](...args);
 		return result;
 	});
 

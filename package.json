@@ -8,7 +8,9 @@
 		"start": "electron . --url=https://steam-web-wrap-demo.jespertheend.deno.net/ --debug-mode --appid=480",
 		"fmt": "prettier . --write",
 		"build-linux": "node ./scripts/build.mjs linux",
-		"build-windows": "node ./scripts/build.mjs windows"
+		"build-windows": "node ./scripts/build.mjs windows",
+		"generate-enums": "node scripts/generateSteamworksEnums.mjs",
+		"postinstall": "npm run generate-enums"
 	},
 	"repository": {
 		"type": "git",
@@ -27,6 +29,6 @@
 		"prettier": "3.4.1"
 	},
 	"dependencies": {
-		"@jespertheend/steamworks.js": "^0.6.0"
+		"@jespertheend/steamworks.js": "^0.7.0"
 	}
 }

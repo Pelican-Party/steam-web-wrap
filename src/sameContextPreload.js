@@ -44,6 +44,11 @@
 		},
 	};
 
+	// Enum objects generated from the steamworks.js type definitions, so they
+	// can be accessed synchronously without going through ipc.
+	// See scripts/generateSteamworksEnums.mjs
+	const steamworksEnums = /** @type {Object.<string, any>} */ (_steamWebWrapInternal.steamworksEnums);
+
 	/**
 	 * @param {{}} target
 	 * @param {string[]} path
@@ -66,6 +71,7 @@
 
 		const props = await _steamWebWrapInternal.getSteamworksProps(path);
 		for (const prop of props) {
+			if (Object.hasOwn(target, prop)) continue;
 			Object.defineProperty(target, prop, {
 				configurable: true,
 				value: propValues,
@@ -136,8 +142,17 @@
 		}
 
 		const interfaceConstants = constants[interfaceProperty];
+		const interfaceEnums = steamworksEnums[interfaceProperty];
 
 		const interfaceTarget = {};
+		if (interfaceEnums) {
+			for (const [enumName, members] of Object.entries(interfaceEnums)) {
+				Object.defineProperty(interfaceTarget, enumName, {
+					configurable: true,
+					value: members,
+				});
+			}
+		}
 		const interfaceProxy = new Proxy(interfaceTarget, {
 			get(_target, property) {
 				if (typeof property == "symbol") return;
@@ -145,6 +160,10 @@
 				if (interfaceConstants) {
 					const propertyConstant = interfaceConstants[property];
 					if (propertyConstant) return propertyConstant;
+				}
+
+				if (interfaceEnums && Object.hasOwn(interfaceEnums, property)) {
+					return interfaceEnums[property];
 				}
 
 				/**
