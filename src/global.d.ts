@@ -13,6 +13,9 @@ declare global {
 		registerSteamworksCallback(steamCallback: string, id: number): Promise<void>;
 		disconnectSteamworksCallback(id: number): Promise<void>;
 		onSteamworksCallbackFired(cb: (id: number, args: unknown[]) => void): Promise<void>;
+		getGlyphForActionOrigin(origin: number): Promise<string>;
+		getGlyphPngForActionOrigin(origin: number, size: number, glyphStyle: number): Promise<string>;
+		getGlyphSvgForActionOrigin(origin: number, glyphStyle: number): Promise<string>;
 	};
 
 	var steamworks: {};

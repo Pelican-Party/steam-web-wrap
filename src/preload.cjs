@@ -123,4 +123,19 @@ contextBridge.exposeInMainWorld("_steamWebWrapInternal", {
 	 * @param {number} id
 	 */
 	disconnectSteamworksCallback: (id) => invokeWithErrorHandling("disconnectSteamworksCallback", id),
+	/** @param {number} origin */
+	getGlyphForActionOrigin: (origin) => invokeWithErrorHandling("getGlyphForActionOrigin", origin),
+	/**
+	 * @param {number} origin
+	 * @param {number} size
+	 * @param {number} glyphStyle
+	 */
+	getGlyphPngForActionOrigin: (origin, size, glyphStyle) =>
+		invokeWithErrorHandling("getGlyphPngForActionOrigin", origin, size, glyphStyle),
+	/**
+	 * @param {number} origin
+	 * @param {number} glyphStyle
+	 */
+	getGlyphSvgForActionOrigin: (origin, glyphStyle) =>
+		invokeWithErrorHandling("getGlyphSvgForActionOrigin", origin, glyphStyle),
 });

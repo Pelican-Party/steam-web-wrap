@@ -36,11 +36,32 @@
 	};
 
 	/**
-	 * @type {Object.<string, Object.<string, number | bigint | undefined> | undefined>}
+	 * @type {Object.<string, Object.<string, any> | undefined>}
 	 */
-	const constants = {
+	const overrides = {
 		input: {
 			STEAM_INPUT_HANDLE_ALL_CONTROLLERS: 2n ** 64n - 1n,
+			/**
+			 * @param {number} origin
+			 */
+			getGlyphForActionOrigin: async (origin) => {
+				return await _steamWebWrapInternal.getGlyphForActionOrigin(origin);
+			},
+			/**
+			 * @param {number} origin
+			 * @param {number} size
+			 * @param {number} glyphStyle
+			 */
+			getGlyphPngForActionOrigin: async (origin, size, glyphStyle) => {
+				return await _steamWebWrapInternal.getGlyphPngForActionOrigin(origin, size, glyphStyle);
+			},
+			/**
+			 * @param {number} origin
+			 * @param {number} glyphStyle
+			 */
+			getGlyphSvgForActionOrigin: async (origin, glyphStyle) => {
+				return await _steamWebWrapInternal.getGlyphSvgForActionOrigin(origin, glyphStyle);
+			},
 		},
 	};
 
@@ -58,7 +79,7 @@
 		if (!_steamWebWrapInternal.debug) return;
 
 		if (path.length == 1) {
-			const interfaceConstants = constants[path[0]];
+			const interfaceConstants = overrides[path[0]];
 			if (interfaceConstants) {
 				for (const [prop, value] of Object.entries(interfaceConstants)) {
 					Object.defineProperty(target, prop, {
@@ -142,7 +163,7 @@
 			return callbackInterface;
 		}
 
-		const interfaceConstants = constants[interfaceProperty];
+		const interfaceConstants = overrides[interfaceProperty];
 		const interfaceEnums = steamworksEnums[interfaceProperty];
 
 		const interfaceTarget = {};

@@ -11,6 +11,8 @@ import steamworksEnumsModule from "./steamworksEnums.cjs";
 // The import is inferred with exact keys, this widens it so dynamic lookups
 // type check and mismatches with the generated file shape fail here.
 const steamworksEnums = /** @type {{enums: EnumsMap, enumArgTypes: EnumArgTypesMap}} */ (steamworksEnumsModule);
+import { readFile } from "node:fs/promises";
+import { extname } from "node:path";
 
 /**
  * @typedef SteamworksCall
@@ -87,6 +89,35 @@ export function initializeSteamworkCalls(ipcMain, webContents, steamClient, debu
 			handle.disconnect();
 			createdCallbackHandles.delete(id);
 		}
+	});
+
+	/**
+	 * @param {string} path
+	 */
+	async function pathToGlyph(path) {
+		const buffer = await readFile(path);
+		let mimeType;
+		const ext = extname(path).toLowerCase();
+		if (ext == ".png") {
+			mimeType = "image/png";
+		} else if (ext == ".svg") {
+			mimeType = "image/svg+xml";
+		} else {
+			return null;
+		}
+		return `data:${mimeType};base64,${buffer.toString("base64")}`;
+	}
+
+	ipcMain.handle("getGlyphForActionOrigin", async (_, origin) => {
+		return await pathToGlyph(getSteamClient().input.getGlyphForActionOrigin(origin));
+	});
+
+	ipcMain.handle("getGlyphPngForActionOrigin", async (_, origin, size, glyphStyle) => {
+		return await pathToGlyph(getSteamClient().input.getGlyphPngForActionOrigin(origin, size, glyphStyle));
+	});
+
+	ipcMain.handle("getGlyphSvgForActionOrigin", async (_, origin, glyphStyle) => {
+		return await pathToGlyph(getSteamClient().input.getGlyphSvgForActionOrigin(origin, glyphStyle));
 	});
 
 	if (debug) {
